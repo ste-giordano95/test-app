@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { GetPokeService } from 'src/app/services/get-poke.service';
 
 @Component({
@@ -8,7 +9,7 @@ import { GetPokeService } from 'src/app/services/get-poke.service';
   <div class="overflow-auto" style="height:90vh;">
   <ng-container *ngIf="this.getService.pokeRejected$ | async as poke">
       <ng-container *ngFor="let data of poke">
-      <div class="alert alert-primary d-flex" role="alert">
+      <div class="alert alert-primary d-flex" role="alert" (click)="getDetails(data.id)">
           <img src="{{data.sprites.front_default}}" alt="">
           <p>#{{data.id}}</p>
           <p class="ml-3">{{data.name}}</p>
@@ -24,9 +25,14 @@ import { GetPokeService } from 'src/app/services/get-poke.service';
 })
 export class ListDeclinedComponent implements OnInit {
 
-  constructor(public getService: GetPokeService) { }
+  constructor(public getService: GetPokeService, private router: Router) { }
 
   ngOnInit(): void {
+  }
+
+  getDetails(id: number) {
+    console.log("proovo");
+    this.router.navigate(['/detail', id, 'noSquad']);
   }
 
 }
