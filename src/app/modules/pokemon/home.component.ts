@@ -24,6 +24,7 @@ import { GetPokeService } from 'src/app/services/get-poke.service';
          <p class="card-text">Height: {{poke.height}}</p>
          <button href="#" class="btn btn-success" (click)="capture(poke)" >Cattura</button>
          <button href="#" class="btn btn-danger" (click)="reject(poke)">Rifiuta</button>
+         <p>E' apparso un {{poke.name}} selvatico!</p>
        </div>
       </div>
     </ng-container>
