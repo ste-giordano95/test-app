@@ -7,7 +7,7 @@ import { GetPokeService } from 'src/app/services/get-poke.service';
   selector: 'app-home',
   template: `
 
-  <div class="d-flex">
+  <div class="d-flex justify-content-center">
 
   <app-list-declined></app-list-declined>
 
@@ -18,13 +18,15 @@ import { GetPokeService } from 'src/app/services/get-poke.service';
       <h1 class="card-title mb-5">{{poke.name}}</h1>
        <img class="card-img-top" src="{{poke.sprites.front_default}}" alt="{{poke.name}}">
         <div class="card-body">
-         <h5 class="mb-3">Dettagli:</h5>
+         <h5 class="mb-3 card-text">Dettagli:</h5>
          <p class="card-text">Id: {{poke.id}}</p>
          <p class="card-text">Weight: {{poke.weight}}</p>
          <p class="card-text">Height: {{poke.height}}</p>
+         <div class="d-flex justify-content-between mb-3">
          <button href="#" class="btn btn-success" (click)="capture(poke)" >Cattura</button>
          <button href="#" class="btn btn-danger" (click)="reject(poke)">Rifiuta</button>
-         <p>E' apparso un {{poke.name}} selvatico!</p>
+         </div>
+         <p class="lol">E' apparso un {{poke.name | uppercase}} selvatico!</p>
        </div>
       </div>
     </ng-container>
@@ -34,6 +36,24 @@ import { GetPokeService } from 'src/app/services/get-poke.service';
     </div>
   `,
   styles: [
+    `
+    .card{
+    
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.79);
+    }
+
+    .card-text{
+     color: white;
+    }
+
+    .card-title{
+      color:white;
+    }
+    .lol{
+      color: yellow;
+    }
+    `
   ]
 })
 export class HomeComponent implements OnInit {

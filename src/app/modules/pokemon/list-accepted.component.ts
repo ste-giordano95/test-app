@@ -9,9 +9,12 @@ import { GetPokeService } from 'src/app/services/get-poke.service';
   <ng-container *ngIf="this.getService.pokeOnSquad$ | async as poke">
     <ng-container *ngFor="let data of poke">
       <div class="alert alert-primary d-flex" role="alert" (click)="getDetails(data.id)">
-          <img src="{{data.sprites.front_default}}" alt="">
-          <p>#{{data.id}}</p>
+       
+        <p>#{{data.id}}</p>
           <p class="ml-3">{{data.name}}</p>
+          <img src="{{data.sprites.front_default}}" alt="">
+        
+          <button class="btn btn-danger" (click)="getService.deleteFromSquad(data)">Elimina</button>
       </div>
     </ng-container>
   </ng-container>
@@ -28,7 +31,6 @@ export class ListAcceptedComponent implements OnInit {
   }
 
   getDetails(id: number) {
-    console.log("proovo");
     this.router.navigate(['/detail', id, 'onSquad']);
   }
 

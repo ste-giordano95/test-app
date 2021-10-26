@@ -3,7 +3,6 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, retry, tap } from 'rxjs/operators';
 import { Pokemon } from '../models/IPokemon';
-import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +29,7 @@ export class GetPokeService {
   }
 
   public getRandomPokemon(): Observable<Pokemon> {
+
     const randomNum = Math.floor(Math.random() * 898) + 1;
 
     return this.http.get<Pokemon>(this.URL + randomNum).pipe(
@@ -44,11 +44,14 @@ export class GetPokeService {
 
   }
 
-
   addToSquad(poke: Pokemon) {
 
-    this.acceptedArr.length < 6 ? this.acceptedArr.push(poke) : console.log("Squadra al massimo!");
+    this.acceptedArr.length < 6 ? this.acceptedArr.push(poke) : alert('Squadra al massimo!');
     this.pokeOnSquad.next(this.acceptedArr);
+  }
+
+  public deleteFromSquad(poke: Pokemon) {
+    this.acceptedArr.splice(this.acceptedArr.indexOf(poke), 1);
   }
 
   addToRejected(poke: Pokemon) {

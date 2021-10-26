@@ -31,7 +31,6 @@ export class ListDeclinedComponent implements OnInit {
   }
 
   getDetails(id: number) {
-    console.log("proovo");
     this.router.navigate(['/detail', id, 'noSquad']);
   }
 
