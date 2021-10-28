@@ -1,20 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { GetPokeService } from 'src/app/services/get-poke.service';
+import { Pokemon } from 'src/app/models/IPokemon';
 
 @Component({
   selector: 'app-list-declined',
   template: `
-<h2>Pokemon Rifiutati: {{this.getService.declinedArr.length}}</h2>
+<h2>Pokemon Rifiutati: {{myPoke.length}}</h2>
 <div class="overflow-auto" style="height:90vh;">
-    <ng-container *ngIf="this.getService.pokeRejected$ | async as poke">
-        <ng-container *ngFor="let data of poke">
-            <div class="alert alert-primary d-flex" role="alert" (click)="getDetails(data.id)">
+<ng-container *ngIf="myPoke">
+    <ng-container *ngFor="let data of myPoke">
+       
+            <div class="alert alert-primary d-flex" role="alert" (click)="this.submitted.emit(data.id)">
                 <img src="{{data.sprites.front_default}}" alt="">
                 <p>#{{data.id}}</p>
                 <p class="ml-3">{{data.name}}</p>
             </div>
-        </ng-container>
+       </ng-container>
     </ng-container>
 </div>
 `,
@@ -24,14 +25,11 @@ import { GetPokeService } from 'src/app/services/get-poke.service';
   ]
 })
 export class ListDeclinedComponent implements OnInit {
+  @Input() myPoke!: Pokemon[];
+  @Output() submitted = new EventEmitter<number>();
 
-  constructor(public getService: GetPokeService, private router: Router) { }
+  constructor() { }
 
-  ngOnInit(): void {
-  }
-
-  getDetails(id: number) {
-    this.router.navigate(['/detail', id, 'noSquad']);
-  }
+  ngOnInit(): void { }
 
 }

@@ -9,6 +9,7 @@ export interface Pokemon {
     sprites: Sprites;
     stats: Stat[];
     moves: Move[];
+    status?: string;
 
 }
 

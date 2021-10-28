@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Pokemon } from 'src/app/models/IPokemon';
 import { GetPokeService } from 'src/app/services/get-poke.service';
@@ -9,14 +10,14 @@ import { GetPokeService } from 'src/app/services/get-poke.service';
 
 <div class="d-flex justify-content-center">
 
-    <app-list-declined></app-list-declined>
+    <app-list-declined [myPoke]="myPokeRejected" (submitted)="getDetails($event)"></app-list-declined>
 
 
-    <ng-container *ngIf="pokemon | async as poke">
+    <ng-container *ngIf="pokemon$ | async as poke">
 
-        <div class="card me-5 ms-5" style="width: 18rem;">
+        <div class="card me-5 ms-5">
             <h1 class="card-title mb-5">{{poke.name}}</h1>
-            <img class="card-img-top" src="{{poke.sprites.front_default}}" alt="{{poke.name}}">
+            <img class="card-img-top"  src="{{poke.sprites.front_default}}" (click)="getDetails(poke.id)">
             <div class="card-body">
                 <h5 class="mb-3 card-text">Dettagli:</h5>
                 <p class="card-text">Id: {{poke.id}}</p>
@@ -31,14 +32,15 @@ import { GetPokeService } from 'src/app/services/get-poke.service';
         </div>
     </ng-container>
 
-    <app-list-accepted></app-list-accepted>
+    <app-list-accepted [myPoke]="myPokeSquad" (submitted)="getDetails($event)"></app-list-accepted>
 
 </div>
 `,
   styles: [
     `
 .card{
-
+width: 18rem !important;
+height: 50rem !important;
 background-color: rgb(0,0,0);
 background-color: rgba(0,0,0,0.79);
 }
@@ -57,26 +59,54 @@ color: yellow;
   ]
 })
 export class HomeComponent implements OnInit {
-  public pokemon!: Observable<Pokemon>;
+  public pokemon$!: Observable<Pokemon>;
+  public myPokeSquad: Pokemon[] = [];
+  public myPokeRejected: Pokemon[] = [];
 
-  constructor(public getService: GetPokeService) { }
+  constructor(public getService: GetPokeService, private router: Router) { }
 
   ngOnInit(): void {
     this.refresh();
   }
 
   capture(poke: Pokemon) {
-    this.getService.addToSquad(poke);
+    this.getService.add(poke, 'onSquad');
+
+    this.getService.allPokemon$.subscribe(data => {
+      const pokemon = data.filter((poke) => poke.status === 'onSquad')
+      if (pokemon) { this.myPokeSquad = pokemon };
+    });
+
     this.refresh();
   }
 
   reject(poke: Pokemon) {
-    this.getService.addToRejected(poke);
+    this.getService.add(poke, 'noSquad');
+
+    this.getService.allPokemon$.subscribe(data => {
+      const pokemon = data.filter((poke) => poke.status === 'noSquad')
+      if (pokemon) { this.myPokeRejected = pokemon };
+    });
+
     this.refresh();
   }
 
   refresh() {
-    this.pokemon = this.getService.getRandomPokemon();
+    this.getService.allPokemon$.subscribe(data => {
+      const pokemon = data.filter((poke) => poke.status === 'onSquad')
+      if (pokemon) { this.myPokeSquad = pokemon };
+    });
+
+    this.getService.allPokemon$.subscribe(data => {
+      const pokemon = data.filter((poke) => poke.status === 'noSquad')
+      if (pokemon) { this.myPokeRejected = pokemon };
+    });
+
+    this.pokemon$ = this.getService.getRandomPokemon();
+  }
+
+  getDetails(id: number) {
+    this.router.navigate(['/detail', id]);
   }
 
 }
