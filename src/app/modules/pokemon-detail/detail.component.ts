@@ -69,16 +69,11 @@ export class DetailComponent implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.activatedRoute.snapshot.paramMap.get('id'));
-    const status = this.activatedRoute.snapshot.paramMap.get('status');
 
-    status == 'onSquad' ? this.getService.pokeOnSquad$.subscribe(data => {
+    this.getService.allPokemon$.subscribe(data => {
       const pokemon = data.find((poke) => poke.id === id)
       if (pokemon) { this.myPoke = pokemon };
-    }) :
-      this.getService.pokeRejected$.subscribe(data => {
-        const pokemon = data.find((poke) => poke.id === id)
-        if (pokemon) { this.myPoke = pokemon };
-      });;
+    });
   }
 
   back(): void {

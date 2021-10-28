@@ -10,21 +10,17 @@ import { Pokemon } from '../models/IPokemon';
 export class GetPokeService {
   private URL: string = 'https://pokeapi.co/api/v2/pokemon/';
 
-  private pokeOnSquad!: BehaviorSubject<Pokemon[]>;
-  private pokeRejected!: BehaviorSubject<Pokemon[]>;
-  public pokeOnSquad$!: Observable<Pokemon[]>;
-  public pokeRejected$!: Observable<Pokemon[]>;
+  private allPokemon!: BehaviorSubject<Pokemon[]>;
+  public allPokemon$!: Observable<Pokemon[]>;
+  public allPokemonArr: Pokemon[] = [];
+  public isLoading: boolean = true;
 
-  public acceptedArr: Pokemon[] = [];
-  public declinedArr: Pokemon[] = [];
 
 
 
   constructor(private http: HttpClient) {
-    this.pokeOnSquad = new BehaviorSubject<Pokemon[]>([]);
-    this.pokeOnSquad$ = this.pokeOnSquad.asObservable();
-    this.pokeRejected = new BehaviorSubject<Pokemon[]>([]);
-    this.pokeRejected$ = this.pokeRejected.asObservable();
+    this.allPokemon = new BehaviorSubject<Pokemon[]>([]);
+    this.allPokemon$ = this.allPokemon.asObservable();
 
   }
 
@@ -34,35 +30,30 @@ export class GetPokeService {
 
     return this.http.get<Pokemon>(this.URL + randomNum).pipe(
       retry(3),
-      tap(() => console.log('Get pokemom random eseguito')),
+      tap(() => this.isLoading = false),
       catchError(this.handleError)
     )
   }
 
-  public getPokemonById(id: number, status: string): {} {
-    return status == 'onSquad' ? this.pokeOnSquad$.subscribe(data => data.find((poke) => { poke.id === id })) : this.pokeRejected$.subscribe(data => data.find((poke) => { poke.id === id }));
+  public getPokemonById(id: number): {} {
+    return this.allPokemon$.subscribe(data => data.find((poke) => { poke.id === id }));
 
   }
 
-  addToSquad(poke: Pokemon) {
+  add(poke: Pokemon, status: string) {
+    poke.status = status;
 
-    this.acceptedArr.length < 6 ? this.acceptedArr.push(poke) : alert('Squadra al massimo!');
-    this.pokeOnSquad.next(this.acceptedArr);
+    status == 'onSquad' ?
+      this.allPokemonArr.filter(poke => poke.status == 'onSquad').length < 6 ? this.allPokemonArr.push(poke) :
+        alert('Squadra al massimo!') : this.allPokemonArr.push(poke);
+
+    this.allPokemon.next(this.allPokemonArr);
   }
 
   public deleteFromSquad(poke: Pokemon) {
-    this.acceptedArr.splice(this.acceptedArr.indexOf(poke), 1);
+    this.allPokemonArr.splice(this.allPokemonArr.indexOf(poke), 1);
+    this.allPokemon.next(this.allPokemonArr);
   }
-
-  addToRejected(poke: Pokemon) {
-    this.declinedArr.push(poke);
-    this.pokeRejected.next(this.declinedArr);
-  }
-
-
-
-
-
 
 
 
