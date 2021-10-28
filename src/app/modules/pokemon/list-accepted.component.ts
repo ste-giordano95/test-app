@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
 import { Pokemon } from 'src/app/models/IPokemon';
 import { GetPokeService } from 'src/app/services/get-poke.service';
 

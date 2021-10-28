@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Pokemon } from 'src/app/models/IPokemon';
@@ -13,11 +13,20 @@ import { GetPokeService } from 'src/app/services/get-poke.service';
     <app-list-declined [myPoke]="myPokeRejected" (submitted)="getDetails($event)"></app-list-declined>
 
 
+    <ng-container *ngIf="this.getService.isLoading">
+    <div class="card d-flex justify-content-center">
+          <button class="btn btn-primary" type="button" disabled>
+        <span class="spinner-border spinner-border-sm text-danger" role="status" aria-hidden="true"></span>
+        <span class="sr-only">Loading...</span>
+      </button>
+    </div>
+    </ng-container>
+
     <ng-container *ngIf="pokemon$ | async as poke">
 
         <div class="card me-5 ms-5">
             <h1 class="card-title mb-5">{{poke.name}}</h1>
-            <img class="card-img-top"  src="{{poke.sprites.front_default}}" (click)="getDetails(poke.id)">
+            <img class="card-img-top"  src="{{poke.sprites.front_default}}">
             <div class="card-body">
                 <h5 class="mb-3 card-text">Dettagli:</h5>
                 <p class="card-text">Id: {{poke.id}}</p>
@@ -63,6 +72,7 @@ export class HomeComponent implements OnInit {
   public myPokeSquad: Pokemon[] = [];
   public myPokeRejected: Pokemon[] = [];
 
+
   constructor(public getService: GetPokeService, private router: Router) { }
 
   ngOnInit(): void {
@@ -92,6 +102,7 @@ export class HomeComponent implements OnInit {
   }
 
   refresh() {
+    this.getService.isLoading = true;
     this.getService.allPokemon$.subscribe(data => {
       const pokemon = data.filter((poke) => poke.status === 'onSquad')
       if (pokemon) { this.myPokeSquad = pokemon };

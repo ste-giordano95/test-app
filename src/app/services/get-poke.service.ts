@@ -12,8 +12,8 @@ export class GetPokeService {
 
   private allPokemon!: BehaviorSubject<Pokemon[]>;
   public allPokemon$!: Observable<Pokemon[]>;
-
   public allPokemonArr: Pokemon[] = [];
+  public isLoading: boolean = true;
 
 
 
@@ -30,7 +30,7 @@ export class GetPokeService {
 
     return this.http.get<Pokemon>(this.URL + randomNum).pipe(
       retry(3),
-      tap(() => console.log('Get pokemom random eseguito')),
+      tap(() => this.isLoading = false),
       catchError(this.handleError)
     )
   }
